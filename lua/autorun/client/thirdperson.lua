@@ -17,11 +17,9 @@ local function ToggleThirdPerson()
         lastChange = CurTime()
         thirdPersonEnabled = not thirdPersonEnabled
         if thirdPersonEnabled then
-            notification.AddLegacy("Третье лицо включено", NOTIFY_HINT, 3)
-            surface.PlaySound("buttons/button3.wav") -- Звук при включении
+            notification.AddLegacy("Третье лицо включено", NOTIFY_HINT, 2)
         else
-            notification.AddLegacy("Третье лицо выключено", NOTIFY_HINT, 3)
-            surface.PlaySound("buttons/button2.wav") -- Звук при выключении
+            notification.AddLegacy("Третье лицо выключено", NOTIFY_HINT, 2)
         end
     end
 end
