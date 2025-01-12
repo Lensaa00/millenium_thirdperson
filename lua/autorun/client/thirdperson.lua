@@ -2,38 +2,54 @@
 local thirdPersonEnabled = false
 
 -- Настройки камеры
-local thirdPersonDistance = 100
-local thirdPersonHeight = 10
-local thirdPersonAngle = 0
+local thirdPersonDistance = 65 -- Дистанция назад
+local thirdPersonHeight = 1 -- Высота камеры
+local thirdPersonX = 25 -- Смещение по оси X
+local thirdPersonAngle = 0 -- Дополнительный угол
+
+local lastChange = CurTime()
+local delay = 1
 
 -- Функция переключения вида
 local function ToggleThirdPerson()
-    thirdPersonEnabled = not thirdPersonEnabled
-    if thirdPersonEnabled then
-        notification.AddLegacy("Вы включили третье лицо", NOTIFY_HINT, 3)
-        surface.PlaySound("buttons/button3.wav") -- Звук при включении
-    else
-        notification.AddLegacy("Вы выключили третье лицо", NOTIFY_HINT, 3)
-        surface.PlaySound("buttons/button2.wav") -- Звук при выключении
+    if not LocalPlayer():Alive() then return end
+    if CurTime() - lastChange >= delay then
+        lastChange = CurTime()
+        thirdPersonEnabled = not thirdPersonEnabled
+        if thirdPersonEnabled then
+            notification.AddLegacy("Третье лицо включено", NOTIFY_HINT, 3)
+            surface.PlaySound("buttons/button3.wav") -- Звук при включении
+        else
+            notification.AddLegacy("Третье лицо выключено", NOTIFY_HINT, 3)
+            surface.PlaySound("buttons/button2.wav") -- Звук при выключении
+        end
     end
 end
 
 -- Бинд на клавишу "V" для переключения
 hook.Add("PlayerButtonDown", "ThirdPersonToggle", function(ply, button)
-    if button == KEY_V then -- Меняем на клавишу "V"
+    if button == KEY_T then -- Меняем на клавишу "V"
         ToggleThirdPerson()
     end
 end)
 
 -- Хук для изменения камеры
 hook.Add("CalcView", "ThirdPersonCalcView", function(ply, pos, angles, fov)
-    if not thirdPersonEnabled or not IsValid(ply) then
+    if not thirdPersonEnabled or not IsValid(ply) or not ply:Alive() then
+        thirdPersonEnabled = false
         return
     end
 
     -- Параметры третьего лица
+    local right = angles:Right() -- Вектор направления вправо от взгляда игрока
+    local forward = angles:Forward() -- Вектор направления вперед от взгляда игрока
+
+    -- Расчет позиции камеры с учетом смещения
     local view = {}
-    view.origin = pos - angles:Forward() * thirdPersonDistance + Vector(0, 0, thirdPersonHeight) -- Позиция камеры
+    view.origin = pos
+        - forward * thirdPersonDistance -- Смещение назад
+        + right * thirdPersonX -- Смещение вправо/влево
+        + Vector(0, 0, thirdPersonHeight) -- Смещение вверх
     view.angles = angles + Angle(0, thirdPersonAngle, 0) -- Угол камеры
     view.fov = fov -- Поле зрения
     view.drawviewer = true -- Показываем модель игрока
