@@ -2,10 +2,10 @@
 local thirdPersonEnabled = false
 
 -- Настройки камеры
-local thirdPersonDistance = 65 -- Дистанция назад
+local thirdPersonDistance = 70 -- Дистанция назад
 local thirdPersonHeight = 1 -- Высота камеры
 local thirdPersonX = 25 -- Смещение по оси X
-local thirdPersonAngle = 0 -- Дополнительный угол
+local thirdPersonAngle = 2 -- Дополнительный угол
 
 local lastChange = CurTime()
 local delay = 1
